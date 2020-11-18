@@ -9,6 +9,9 @@ export default {
   name: 'About',
   metaInfo: {
     title: 'About'
+  },
+  asyncData () {
+    console.log('about')
   }
 }
 </script>

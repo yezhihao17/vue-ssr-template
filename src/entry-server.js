@@ -18,15 +18,34 @@ export default context => {
         return reject({ code: 404 })
       }
 
-      context.rendered = () => {
-        // Renderer 会把 context.state 数据对象内联到页面模板中
-        // 最终发送给客户端的页面中会包含一段脚本：window.__INITIAL_STATE__ = context.state
-        // 客户端就要把页面中的 window.__INITIAL_STATE__ 拿出来填充到客户端 store 容器中
-        context.state = store.state
-      }
+      // context.rendered = () => {
+      //   // Renderer 会把 context.state 数据对象内联到页面模板中
+      //   // 最终发送给客户端的页面中会包含一段脚本：window.__INITIAL_STATE__ = context.state
+      //   // 客户端就要把页面中的 window.__INITIAL_STATE__ 拿出来填充到客户端 store 容器中
+      //   context.state = store.state
+      // }
 
-      // Promise 应该 resolve 应用程序实例，以便它可以渲染
-      resolve(app)
+      // 对所有匹配的路由组件调用 `asyncData()`
+      Promise.all(matchedComponents.map(Component => {
+        if (Component.asyncData) {
+          return Component.asyncData({
+            store,
+            route: router.currentRoute
+          })
+        }
+      })).then(() => {
+        // 在所有预取钩子(preFetch hook) resolve 后，
+        // 我们的 store 现在已经填充入渲染应用程序所需的状态。
+        // 当我们将状态附加到上下文，
+        // 并且 `template` 选项用于 renderer 时，
+        // 状态将自动序列化为 `window.__INITIAL_STATE__`，并注入 HTML。
+        context.state = store.state
+
+        resolve(app)
+      }).catch(reject)
+
+      // // Promise 应该 resolve 应用程序实例，以便它可以渲染
+      // resolve(app)
     }, reject)
   })
 }

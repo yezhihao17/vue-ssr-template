@@ -15,9 +15,21 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import { getList } from '@/api/test'
 
 export default {
   name: 'Home',
+  async asyncData ({ store }) {
+    // 获取数据
+    const { data } = await getList()
+    const list = data.data || []
+
+    // 设置 store 数据
+    store.commit('setList', list)
+    return {
+      list
+    }
+  },
   data () {
     return {
       message: '123'
@@ -27,15 +39,15 @@ export default {
     ...mapState(['list'])
   },
   methods: {
-    ...mapActions(['getList']),
+    // ...mapActions(['getList']),
     bundle () {
       console.log('click bundle')
     }
   },
-  // Vue SSR 特殊为服务端渲染提供的一个生命周期钩子函数
-  serverPrefetch () {
-    return this.getList()
-  },
+  // // Vue SSR 特殊为服务端渲染提供的一个生命周期钩子函数
+  // serverPrefetch () {
+  //   return this.getList()
+  // },
   metaInfo: {
     title: 'Home'
   }

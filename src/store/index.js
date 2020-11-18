@@ -17,11 +17,11 @@ export function createStore () {
       }
     },
     actions: {
-      // 请求列表
-      async getList ({ commit }) {
-        const { data } = await axios.get('https://test.edianyao.com/micro/ydymkth5/qywtab/tabList')
-        commit('setList', data.data)
-      }
+      // // 请求列表
+      // async getList ({ commit }) {
+      //   const { data } = await axios.get('https://test.edianyao.com/micro/ydymkth5/qywtab/tabList')
+      //   commit('setList', data.data)
+      // }
     }
   })
 }
